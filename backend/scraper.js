@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
-const db = require('./db'); 
+const db = path.join(__dirname, 'articles.db');
 
 const BASE_PAGE_URL = 'https://beyondchats.com/blogs/page/';
 const START_PAGE = 15;
