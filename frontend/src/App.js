@@ -8,7 +8,7 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('https://beyondchats-backend-j9ex.onrender.com')
+    axios.get('https://beyondchats-backend-j9ex.onrender.com/articles')
       .then(res => {
         const fixedArticles = res.data.map(article => ({
           ...article,
