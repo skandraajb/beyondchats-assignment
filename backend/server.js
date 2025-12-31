@@ -22,20 +22,26 @@ app.get('/articles/:id', (req, res) => {
 
 app.post('/articles', (req, res) => {
   const { title, content, url } = req.body;
-  db.run('INSERT INTO articles (title, content, url) VALUES (?, ?, ?)', 
-    [title, content, url], function(err) {
+  db.run(
+    'INSERT INTO articles (title, content, url) VALUES (?, ?, ?)',
+    [title, content, url],
+    function (err) {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ id: this.lastID });
-    });
+    }
+  );
 });
 
 app.put('/articles/:id', (req, res) => {
   const { updated_content, citations } = req.body;
-  db.run('UPDATE articles SET updated_content = ?, citations = ? WHERE id = ?', 
-    [updated_content, JSON.stringify(citations), req.params.id], function(err) {
+  db.run(
+    'UPDATE articles SET updated_content = ?, citations = ? WHERE id = ?',
+    [updated_content, JSON.stringify(citations), req.params.id],
+    function (err) {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ success: true, changes: this.changes });
-    });
+    }
+  );
 });
 
 app.listen(3001, () => {
