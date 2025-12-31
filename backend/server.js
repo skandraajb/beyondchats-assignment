@@ -6,6 +6,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.json({ message: 'BeyondChats API - Visit /articles' });
+});
+
 app.get('/articles', (req, res) => {
   db.all('SELECT * FROM articles ORDER BY id', (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -44,6 +48,8 @@ app.put('/articles/:id', (req, res) => {
   );
 });
 
-app.listen(3001, () => {
-  console.log('Backend: http://localhost:3001/articles');
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Backend running on port ${PORT}`);
+  console.log('Test: http://localhost:3001/articles');
 });
