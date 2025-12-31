@@ -1,33 +1,31 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import './App.css'
-
-interface Article {
-  id: number
-  title: string
-  content: string
-  updated_content?: string
-  citations?: string[]
-}
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import './App.css';
 
 function App() {
-  const [articles, setArticles] = useState<Article[]>([])
-  const [view, setView] = useState<'original' | 'updated'>('original')
-  const [loading, setLoading] = useState(true)
+  const [articles, setArticles] = useState([]);
+  const [view, setView] = useState('original');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios.get('http://localhost:3001/articles')
       .then(res => {
-        setArticles(res.data)
-        setLoading(false)
+        const fixedArticles = res.data.map(article => ({
+          ...article,
+          citations: typeof article.citations === 'string' 
+            ? JSON.parse(article.citations || '[]') 
+            : (article.citations || [])
+        }));
+        setArticles(fixedArticles);
+        setLoading(false);
       })
       .catch(err => {
-        console.error(err)
-        setLoading(false)
-      })
-  }, [])
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
 
-  if (loading) return <div className="loading">Loading...</div>
+  if (loading) return <div className="loading">Loading...</div>;
 
   return (
     <div className="app">
@@ -56,11 +54,13 @@ function App() {
               <p className="content">
                 {view === 'original' ? article.content : article.updated_content || article.content}
               </p>
-              {view === 'updated' && article.citations && (
+              {view === 'updated' && article.citations && article.citations.length > 0 && (
                 <div className="refs">
                   <strong>References:</strong>
                   {article.citations.slice(0, 2).map((url, i) => (
-                    <div key={i}>[{i+1}] {url}</div>
+                    <div key={i}>
+                      [{i+1}] <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+                    </div>
                   ))}
                 </div>
               )}
@@ -69,7 +69,7 @@ function App() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
